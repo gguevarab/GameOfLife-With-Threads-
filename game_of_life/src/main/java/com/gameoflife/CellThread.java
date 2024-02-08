@@ -1,6 +1,6 @@
 package com.gameoflife;
 
-public class CellThread extends Thread{
+public class CellThread implements Runnable{
 
     public CellThread(){
 
@@ -16,6 +16,8 @@ public class CellThread extends Thread{
 
     public void run(){
         
+        System.out.println("I'm a real homie");
+
     }
 
     

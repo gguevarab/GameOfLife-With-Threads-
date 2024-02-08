@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.CyclicBarrier;
 
 
 
@@ -17,9 +18,10 @@ public class Main {
     private void start(int size){
         this.gameMap = new char[size][size];
         this.mapSize = size;
-        //this.makeMap();
-        this.loadData();
+        this.makeMap();
+        //this.loadData();
         this.printMap();
+        this.runNextGen();
     }
 
 
@@ -43,6 +45,21 @@ public class Main {
 
         } catch(FileNotFoundException e) {
             e.printStackTrace();
+        }
+
+    }
+
+
+
+    private void runNextGen (){
+
+        CyclicBarrier ciclo = new CyclicBarrier(this.mapSize * this.mapSize);
+
+        for(int y = 0; y < this.mapSize; y++){
+            for(int x = 0; x < this.mapSize; x++){
+                Thread thread = new Thread(new CellThread());
+                thread.start();
+            }
         }
 
     }
@@ -86,7 +103,7 @@ public class Main {
         System.out.println("\nWelcome to the game of life!\n");
 
         Main mainExecution = new Main();
-        mainExecution.start(3);
+        mainExecution.start(10);
 
     }
 }
