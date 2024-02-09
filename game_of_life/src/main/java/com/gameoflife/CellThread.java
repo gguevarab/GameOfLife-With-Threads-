@@ -2,7 +2,13 @@ package com.gameoflife;
 
 public class CellThread implements Runnable{
 
-    public CellThread(){
+    CellBuffer buzon;
+    private int row;
+
+    public CellThread(int row){
+
+        this.row = row;
+        this.buzon = new CellBuffer(row+1);
 
     }
 
@@ -16,7 +22,7 @@ public class CellThread implements Runnable{
 
     public void run(){
         
-        System.out.println("I'm a real homie");
+        System.out.println("My row is " + this.row);
 
     }
 

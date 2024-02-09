@@ -3,6 +3,7 @@ package com.gameoflife;
 public class CellBuffer {
 
     private int n_alive_homies = 0;
+    private int capacity;
 
 
     public void declareAliveToHomie(){
@@ -18,9 +19,9 @@ public class CellBuffer {
     }
 
 
-    public CellBuffer(){
+    public CellBuffer(int capacity){
 
-
+        this.capacity = capacity;
         
     }
     

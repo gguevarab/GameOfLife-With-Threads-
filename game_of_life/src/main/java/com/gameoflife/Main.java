@@ -2,9 +2,10 @@ package com.gameoflife;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.CyclicBarrier;
 
 
 
@@ -53,12 +54,22 @@ public class Main {
 
     private void runNextGen (){
 
-        CyclicBarrier ciclo = new CyclicBarrier(this.mapSize * this.mapSize);
+        List<Thread> running_threads = new ArrayList<>();
 
         for(int y = 0; y < this.mapSize; y++){
             for(int x = 0; x < this.mapSize; x++){
-                Thread thread = new Thread(new CellThread());
+                Thread thread = new Thread(new CellThread(y));
                 thread.start();
+                running_threads.add(thread);
+            }
+        }
+
+        for(Thread thread: running_threads){
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
 
