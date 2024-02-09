@@ -2,13 +2,12 @@ package com.gameoflife;
 
 public class CellThread implements Runnable{
 
-    CellBuffer buzon;
-    private int row;
+    CellBuffer mailbox;
+    private int[] coordinates;
 
-    public CellThread(int row){
+    public CellThread(int[] coordinates){
 
-        this.row = row;
-        this.buzon = new CellBuffer(row+1);
+        this.coordinates = coordinates;
 
     }
 
@@ -22,7 +21,8 @@ public class CellThread implements Runnable{
 
     public void run(){
         
-        System.out.println("My row is " + this.row);
+        System.out.println("My row is " + this.coordinates[0]);
+        this.mailbox = new CellBuffer(coordinates[0]+1);
 
     }
 

@@ -58,7 +58,7 @@ public class Main {
 
         for(int y = 0; y < this.mapSize; y++){
             for(int x = 0; x < this.mapSize; x++){
-                Thread thread = new Thread(new CellThread(y));
+                Thread thread = new Thread(new CellThread(new int[]{y,x}));
                 thread.start();
                 running_threads.add(thread);
             }
@@ -114,7 +114,7 @@ public class Main {
         System.out.println("\nWelcome to the game of life!\n");
 
         Main mainExecution = new Main();
-        mainExecution.start(10);
+        mainExecution.start(5);
 
     }
 }

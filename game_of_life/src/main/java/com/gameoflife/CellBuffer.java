@@ -6,7 +6,7 @@ public class CellBuffer {
     private int capacity;
 
 
-    public void declareAliveToHomie(){
+    public void declareAliveToHomies(){
 
         this.n_alive_homies += 1;
 
@@ -22,6 +22,7 @@ public class CellBuffer {
     public CellBuffer(int capacity){
 
         this.capacity = capacity;
+        System.out.println("I'm a mailbox with a capacity of " + capacity);
         
     }
     
