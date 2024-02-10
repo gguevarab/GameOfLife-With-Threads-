@@ -1,5 +1,6 @@
 package com.gameoflife;
 
+//Buffer class
 public class CellBuffer {
 
     private int n_alive_homies = 0;
@@ -7,8 +8,6 @@ public class CellBuffer {
 
 
     public void declareAliveToHomies(){
-
-        this.n_alive_homies += 1;
 
     }
 

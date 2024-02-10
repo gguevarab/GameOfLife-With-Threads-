@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 
-
+//Main class
 public class Main {
 
     private int mapSize;

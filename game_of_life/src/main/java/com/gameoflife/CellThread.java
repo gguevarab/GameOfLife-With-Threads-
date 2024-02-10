@@ -1,5 +1,7 @@
 package com.gameoflife;
 
+
+//Cell class
 public class CellThread implements Runnable{
 
     CellBuffer mailbox;
