@@ -3,17 +3,17 @@ package com.gameoflife;
 //Buffer class
 public class CellBuffer {
 
-    private int n_alive_homies = 0;
+    private int nAlive = 0;
     private int capacity;
 
 
-    public void declareAliveToHomies(){
+    public void declareAlive(){
 
     }
 
-    public int getAliveHomies(){
+    public int getAlive(){
 
-        return this.n_alive_homies;
+        return this.nAlive;
 
     }
 

@@ -6,23 +6,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.CyclicBarrier;
 
 
 //Main class
 public class Main {
 
     private int mapSize;
+    private int nGenerations;
     private char[][] gameMap;
+    private CellThread[][] cellMap;
 
 
 
-    private void start(int size){
+    private void start(int size, int nGen){
+
         this.gameMap = new char[size][size];
         this.mapSize = size;
+        this.nGenerations = nGen;
         this.makeMap();
         //this.loadData();
         this.printMap();
-        this.runNextGen();
+
+        //A cycle to iterate through the generations
+        for(int x = 0; x < nGenerations; x++){
+            this.runNextGen();
+        }
+
     }
 
 
@@ -33,13 +43,13 @@ public class Main {
 
             this.mapSize = Integer.parseInt(scanner.nextLine());
 
-            for(int y = 0; y < this.mapSize; y++){
+            for(int x = 0; x < this.mapSize; x++){
                 String[] tempValuesRow = scanner.nextLine().split(",");
-                for(int x = 0; x < this.mapSize; x++){
-                    if(tempValuesRow[x].equals("true")){
-                        this.gameMap[y][x] = '#';
+                for(int y = 0; y < this.mapSize; y++){
+                    if(tempValuesRow[y].equals("true")){
+                        this.gameMap[x][y] = '#';
                     } else {
-                        this.gameMap[y][x] = '-';
+                        this.gameMap[x][y] = '-';
                     }
                 }
             }
@@ -54,24 +64,25 @@ public class Main {
 
     private void runNextGen (){
 
-        List<Thread> running_threads = new ArrayList<>();
-
-        for(int y = 0; y < this.mapSize; y++){
-            for(int x = 0; x < this.mapSize; x++){
-                Thread thread = new Thread(new CellThread(new int[]{y,x}));
-                thread.start();
-                running_threads.add(thread);
+        // We create each cell and set the 'alive status' on each one
+        for(int x = 0; x < this.mapSize; x++){
+            for(int y = 0; y < this.mapSize; y++){
+                if(gameMap[x][y] == '#'){
+                    this.cellMap[x][y] = new CellThread(new int[]{x,y}, true);
+                } else {
+                    this.cellMap[x][y] = new CellThread(new int[]{x,y}, false);
+                }
             }
         }
 
-        for(Thread thread: running_threads){
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        // We then send a copy of the map to the cells so they can use it
+        for(int x = 0; x < this.mapSize; x++){
+            for(int y = 0; y < this.mapSize; y++){
+                this.cellMap[x][y].setMap(cellMap);
             }
         }
+
+
 
     }
 
@@ -99,10 +110,10 @@ public class Main {
 
 
     private void printMap(){
-        for(int y = 0; y < mapSize; y++){
+        for(int x = 0; x < mapSize; x++){
             String tempRowData = "";
-            for(int x = 0; x < mapSize; x++){
-                tempRowData += this.gameMap[y][x] + " ";
+            for(int y = 0; y < mapSize; y++){
+                tempRowData += this.gameMap[x][y] + " ";
             }
             System.out.println(tempRowData);
         }
@@ -114,7 +125,7 @@ public class Main {
         System.out.println("\nWelcome to the game of life!\n");
 
         Main mainExecution = new Main();
-        mainExecution.start(5);
+        mainExecution.start(5, 4);
 
     }
 }
