@@ -2,8 +2,6 @@ package com.gameoflife;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.CyclicBarrier;
@@ -22,6 +20,7 @@ public class Main {
     private void start(int size, int nGen){
 
         this.gameMap = new char[size][size];
+        this.cellMap = new CellThread[size][size];
         this.mapSize = size;
         this.nGenerations = nGen;
         this.makeMap();
@@ -64,6 +63,8 @@ public class Main {
 
     private void runNextGen (){
 
+        CyclicBarrier barrier = new CyclicBarrier(mapSize);
+
         // We create each cell and set the 'alive status' on each one
         for(int x = 0; x < this.mapSize; x++){
             for(int y = 0; y < this.mapSize; y++){
@@ -75,10 +76,13 @@ public class Main {
             }
         }
 
+        CellThread.initializeBarrier(mapSize * mapSize);
+
         // We then send a copy of the map to the cells so they can use it
         for(int x = 0; x < this.mapSize; x++){
             for(int y = 0; y < this.mapSize; y++){
                 this.cellMap[x][y].setMap(cellMap);
+                this.cellMap[x][y].start();
             }
         }
 
@@ -92,8 +96,8 @@ public class Main {
 
         Random rand = new Random();
 
-        for(int y = 0; y < mapSize; y++){
-            for(int x = 0; x < mapSize; x++){
+        for(int x = 0; x < mapSize; x++){
+            for(int y = 0; y < mapSize; y++){
                 int randomNumber = rand.nextInt(2);
                 if(randomNumber == 1){
                     this.gameMap[y][x] = '#';

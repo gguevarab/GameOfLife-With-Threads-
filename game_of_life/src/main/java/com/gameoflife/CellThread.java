@@ -1,11 +1,12 @@
 package com.gameoflife;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 //Cell class
 public class CellThread extends Thread{
 
-    private static CyclicBarrier barrier = new CyclicBarrier(0);
+    private static CyclicBarrier barrier;
 
     CellBuffer mailbox;
     CellThread[][] cellMap;
@@ -13,11 +14,16 @@ public class CellThread extends Thread{
     private int[] coordinates;
     private int n;
 
+	public static void initializeBarrier(int barrierSize) {
+
+		barrier = new CyclicBarrier(barrierSize);
+
+	}
+
     public CellThread(int[] coordinates, boolean status){
 
         this.coordinates = coordinates;
         this.isAlive = status;
-        this.n = cellMap.length;
         
 
     }
@@ -26,6 +32,7 @@ public class CellThread extends Thread{
     public void setMap(CellThread[][] cellMap){
 
         this.cellMap = cellMap;
+		this.n = cellMap.length;
 
     }
 
@@ -105,6 +112,16 @@ public class CellThread extends Thread{
         
         System.out.println("My row is " + this.coordinates[0]);
         this.mailbox = new CellBuffer(coordinates[0]+1, calculateAdjacents());
+		
+		try {
+			barrier.await();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BrokenBarrierException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 
