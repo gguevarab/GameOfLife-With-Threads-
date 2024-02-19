@@ -17,12 +17,14 @@ public class Main {
 
 
 
-    private void start(int size, int nGen){
+    private void initialize(int size, int nGen){
+
+        CellThread.initializeBarrier(size * size);
 
         this.gameMap = new char[size][size];
         this.cellMap = new CellThread[size][size];
         this.mapSize = size;
-        this.nGenerations = nGen;
+        this.nGenerations = 4;
         this.makeMap();
         //this.loadData();
         this.printMap();
@@ -31,7 +33,6 @@ public class Main {
         for(int x = 0; x < nGenerations; x++){
             this.runNextGen();
         }
-
     }
 
 
@@ -63,7 +64,7 @@ public class Main {
 
     private void runNextGen (){
 
-        CyclicBarrier barrier = new CyclicBarrier(mapSize);
+        
 
         // We create each cell and set the 'alive status' on each one
         for(int x = 0; x < this.mapSize; x++){
@@ -75,8 +76,6 @@ public class Main {
                 }
             }
         }
-
-        CellThread.initializeBarrier(mapSize * mapSize);
 
         // We then send a copy of the map to the cells so they can use it
         for(int x = 0; x < this.mapSize; x++){
@@ -129,7 +128,7 @@ public class Main {
         System.out.println("\nWelcome to the game of life!\n");
 
         Main mainExecution = new Main();
-        mainExecution.start(5, 4);
+        mainExecution.initialize(3, 4);
 
     }
 }

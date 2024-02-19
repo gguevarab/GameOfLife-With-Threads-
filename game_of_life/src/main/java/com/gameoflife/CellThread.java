@@ -14,6 +14,7 @@ public class CellThread extends Thread{
     private int[] coordinates;
     private int n;
 
+	
 	public static void initializeBarrier(int barrierSize) {
 
 		barrier = new CyclicBarrier(barrierSize);
@@ -23,8 +24,7 @@ public class CellThread extends Thread{
     public CellThread(int[] coordinates, boolean status){
 
         this.coordinates = coordinates;
-        this.isAlive = status;
-        
+        this.isAlive = status;        
 
     }
 
@@ -112,7 +112,9 @@ public class CellThread extends Thread{
         
         System.out.println("My row is " + this.coordinates[0]);
         this.mailbox = new CellBuffer(coordinates[0]+1, calculateAdjacents());
-		
+
+		System.out.println("I'm " + coordinates[0] + " at " + coordinates[1]);
+
 		try {
 			barrier.await();
 		} catch (InterruptedException e) {
