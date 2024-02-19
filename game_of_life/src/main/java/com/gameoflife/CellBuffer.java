@@ -4,11 +4,28 @@ package com.gameoflife;
 public class CellBuffer {
 
     private int nAlive = 0;
+    private int nDead = 0;
+    private int nAdjacents = 0;
     private int capacity;
+    private Semáforo semaforo;
 
-
-    public void declareAlive(){
-
+    public void escribir(boolean estado){
+    	semaforo.p();
+    	if(estado) 
+    	{
+        	this.nAlive++;
+    	}
+    	else 
+    	{
+        	this.nDead++;
+    	}
+    	this.nAdjacents--;
+    }
+    
+    public int leer() 
+    {
+    	semaforo.v();
+    	return this.capacity;
     }
 
     public int getAlive(){
@@ -17,11 +34,31 @@ public class CellBuffer {
 
     }
 
+    public int getDead(){
 
-    public CellBuffer(int capacity){
+        return this.nDead;
 
+    }
+
+    public int getNAdjacents(){
+
+        return this.nAdjacents;
+
+    }
+
+    public int getCapacity(){
+
+        return this.capacity;
+
+    }
+
+
+    public CellBuffer(int capacity, int adjacents){
+
+        this.nAdjacents = adjacents;
         this.capacity = capacity;
-        System.out.println("I'm a mailbox with a capacity of " + capacity);
+        this.semaforo  = new Semáforo(capacity);
+        System.out.println("I'm a mailbox with a capacity of " + capacity + " and " + adjacents + "adjacent messagers");
         
     }
     
