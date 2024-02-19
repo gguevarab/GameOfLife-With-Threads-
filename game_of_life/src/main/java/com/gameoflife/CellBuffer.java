@@ -9,8 +9,8 @@ public class CellBuffer {
     private int capacity;
     private Semáforo semaforo;
 
-    public void escribir(boolean estado){
-    	semaforo.p();
+    public synchronized void escribir(boolean estado){
+        semaforo.p();
     	if(estado) 
     	{
         	this.nAlive++;
@@ -22,10 +22,10 @@ public class CellBuffer {
     	this.nAdjacents--;
     }
     
-    public int leer() 
+    public synchronized int leer() 
     {
-    	semaforo.v();
-    	return this.capacity;
+        semaforo.v();
+    	return this.nAlive;
     }
 
     public int getAlive(){
