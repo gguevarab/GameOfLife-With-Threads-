@@ -16,16 +16,15 @@ public class Main {
 
 
 
-    private void initialize(int size, int nGen){
+    private void initialize(int nGen){
 
-        CellThread.initializeBarrier(size * size);
+        this.loadData();
 
-        this.gameMap = new char[size][size];
-        this.cellMap = new CellThread[size][size];
-        this.mapSize = size;
+        CellThread.initializeBarrier(this.mapSize * this.mapSize);
+
+        this.cellMap = new CellThread[this.mapSize][this.mapSize];
         this.nGenerations = nGen;
         //this.makeMap();
-        this.loadData();
 
         //A cycle to iterate through the generations
         for(int x = 0; x < nGenerations; x++){
@@ -38,9 +37,11 @@ public class Main {
 
     private void loadData(){
 
-        try(Scanner scanner = new Scanner(new File("docs/test.txt"))){
+        try(Scanner scanner = new Scanner(new File("docs/n2.txt"))){
 
-            this.mapSize = Integer.parseInt(scanner.nextLine());
+            int size = Integer.parseInt(scanner.nextLine());
+            this.gameMap = new char[size][size];
+            this.mapSize = size;
 
             for(int x = 0; x < this.mapSize; x++){
                 String[] tempValuesRow = scanner.nextLine().split(",");
@@ -149,9 +150,12 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("\nWelcome to the game of life!\n");
+        System.out.print("Please choose the number of generations: ");
+        Scanner input = new Scanner(System.in);
+        int number = input.nextInt();
 
         Main mainExecution = new Main();
-        mainExecution.initialize(3, 5);
+        mainExecution.initialize(number);
 
     }
 }
