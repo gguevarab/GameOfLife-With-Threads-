@@ -10,7 +10,9 @@ public class CellThread extends Thread{
 
     CellBuffer mailbox;
     CellThread[][] cellMap;
+
     private boolean isAlive;
+
     private int[] coordinates;
     private int n;
 
@@ -21,11 +23,11 @@ public class CellThread extends Thread{
 
 	}
 
-    public CellThread(int[] coordinates, boolean status){
+    public CellThread(int[] coordinates, boolean status, int mapSize){
 
         this.coordinates = coordinates;
-        this.isAlive = status;        
-		this.mailbox = new CellBuffer(coordinates[0]+1, calculateAdjacents());
+        this.isAlive = status;      
+		this.mailbox = new CellBuffer(coordinates[0]+1, calculateAdjacents(mapSize), status);  
 
     }
 
@@ -38,22 +40,41 @@ public class CellThread extends Thread{
     }
 
 
-
-    public void turnDead(){
-
-        this.isAlive = false;
-
-    }
-
-
     public boolean getStatus(){
 
         return this.isAlive;
 
     }
 
-    private int calculateAdjacents() 
+    private int calculateAdjacents(int mapSize) 
     {
+		int nAdjacents = 0;
+
+		for(int x = -1; x < 2; x++){
+			for(int y = -1; y < 2; y++){
+				if(x == 0 && y == 0){
+					continue;
+				}
+				else if(coordinates[0] + x < 0 || coordinates[1] + y < 0){
+					continue;
+				} else{
+
+					try{
+						if(coordinates[0] + x < mapSize && coordinates[1] + y < mapSize){
+							nAdjacents++;
+						}
+						
+					} catch(Exception e) {
+						
+					}
+
+				}
+				
+			}
+		}
+
+		return nAdjacents;
+		/*
     	//See if cell is in a edge or a border
     	if (this.coordinates[0]==0) 
     	{
@@ -107,29 +128,36 @@ public class CellThread extends Thread{
 	    	return 5;
     	}
     	return 8;
+		*/
     }
 
     public void run(){
-        
-        System.out.println("My row is " + this.coordinates[0]);
 
-		System.out.println("I'm " + coordinates[0] + " at " + coordinates[1]);
+		//System.out.println("My row is " + coordinates[0] + " at column " + coordinates[1]);
 
-		for(int x = -1; x < 2; x++){
-			for(int y = -1; y < 2; y++){
-				if(x == 0 && y == 0){
-					continue;
-				}
-				else if(coordinates[0] + x < 0 || coordinates[1] + y < 0){
-					continue;
-				}
-				try{
-					cellMap[coordinates[0] + x][coordinates[1] + y].mailbox.escribir(this.isAlive);
-				} catch(Exception e) {
-					
-				}
-			}
+		ConsumerCell consumer = new ConsumerCell(this.mailbox);
+		ProductorCell productor = new ProductorCell(this.isAlive, this.coordinates, this.cellMap);
+
+		consumer.start();
+		productor.start();
+
+		try {
+			productor.join();
+			consumer.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
+		/*/
+		if(tempBufferData[0] > 0 && tempBufferData[0] < 4){
+			this.isAlive = true;
+		} else {
+			this.isAlive = false;
+		}
+		*/
+
+		this.isAlive = mailbox.getAliveCell();
 
 		try {
 			barrier.await();
@@ -140,10 +168,6 @@ public class CellThread extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		int nAlive = this.mailbox.leer();
-
-		System.out.println(nAlive);
 
     }
 

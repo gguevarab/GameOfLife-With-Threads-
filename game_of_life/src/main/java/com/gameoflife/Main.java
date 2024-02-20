@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.CyclicBarrier;
 
 
 //Main class
@@ -24,13 +23,13 @@ public class Main {
         this.gameMap = new char[size][size];
         this.cellMap = new CellThread[size][size];
         this.mapSize = size;
-        this.nGenerations = 4;
-        this.makeMap();
-        //this.loadData();
-        this.printMap();
+        this.nGenerations = nGen;
+        //this.makeMap();
+        this.loadData();
 
         //A cycle to iterate through the generations
         for(int x = 0; x < nGenerations; x++){
+            System.out.println("========================== Gen " + x + " ==========================");
             this.runNextGen();
         }
     }
@@ -64,15 +63,15 @@ public class Main {
 
     private void runNextGen (){
 
-        
+        this.printMap();        
 
         // We create each cell and set the 'alive status' on each one
         for(int x = 0; x < this.mapSize; x++){
             for(int y = 0; y < this.mapSize; y++){
                 if(gameMap[x][y] == '#'){
-                    this.cellMap[x][y] = new CellThread(new int[]{x,y}, true);
+                    this.cellMap[x][y] = new CellThread(new int[]{x,y}, true, gameMap.length);
                 } else {
-                    this.cellMap[x][y] = new CellThread(new int[]{x,y}, false);
+                    this.cellMap[x][y] = new CellThread(new int[]{x,y}, false, gameMap.length);
                 }
             }
         }
@@ -85,8 +84,32 @@ public class Main {
             }
         }
 
+        //Main waits for the threads to finish. It not necessary to wait for all of them since all threads have a common cyclicbarrier
+        try {
+            this.cellMap[0][0].join();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        this.refreshMap();
 
 
+    }
+
+
+
+    private void refreshMap(){
+        for(int x = 0; x < this.mapSize; x++){
+            for(int y = 0; y < this.mapSize; y++){
+                if(this.cellMap[x][y].getStatus()){
+                    this.gameMap[x][y] = '#';
+                } else {
+                    this.gameMap[x][y] = '-';
+                }
+                
+            }
+        }
     }
 
 
@@ -128,7 +151,7 @@ public class Main {
         System.out.println("\nWelcome to the game of life!\n");
 
         Main mainExecution = new Main();
-        mainExecution.initialize(3, 4);
+        mainExecution.initialize(3, 5);
 
     }
 }

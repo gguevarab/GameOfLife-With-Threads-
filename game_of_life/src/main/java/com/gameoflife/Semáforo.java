@@ -3,9 +3,11 @@ package com.gameoflife;
 public class Semáforo {
 	
 	private int contador;
+	private int capacidad; 
 	
-	public Semáforo(int pContador) {
-		this.contador = pContador;
+	public Semáforo(int capacidad) {
+		this.capacidad = capacidad;
+		this.contador = capacidad;
 	}
 	
 	public synchronized void p() {
@@ -20,7 +22,9 @@ public class Semáforo {
 	}
 	
 	public synchronized void v() {
-		contador ++;
+		if(contador < capacidad){
+			contador ++;
+		}
 		if(contador <= 0) {
 			this.notify();
 		}

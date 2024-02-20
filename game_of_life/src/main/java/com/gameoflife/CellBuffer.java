@@ -3,13 +3,15 @@ package com.gameoflife;
 //Buffer class
 public class CellBuffer {
 
+    private boolean success = false;
     private int nAlive = 0;
     private int nDead = 0;
-    private int nAdjacents = 0;
+    private int nAdjacents;
     private int capacity;
+    private boolean cellIsAlive;
     private Semáforo semaforo;
 
-    public synchronized void escribir(boolean estado){
+    public void escribir(boolean estado){
         semaforo.p();
     	if(estado) 
     	{
@@ -19,24 +21,30 @@ public class CellBuffer {
     	{
         	this.nDead++;
     	}
-    	this.nAdjacents--;
     }
     
-    public synchronized int leer() 
+    public int[] leer() 
     {
         semaforo.v();
-    	return this.nAlive;
+    	return new int[] {this.nAlive, this.nDead, nAdjacents};
     }
 
-    public int getAlive(){
+    public void setAlive(){
 
-        return this.nAlive;
+        if (cellIsAlive) {
+            this.success = true;
+        } else {
+            if (nAlive == 3) {
+                this.success = true;
+            }
+        }
+        
 
     }
 
-    public int getDead(){
+    public boolean getAliveCell(){
 
-        return this.nDead;
+        return success;
 
     }
 
@@ -53,12 +61,13 @@ public class CellBuffer {
     }
 
 
-    public CellBuffer(int capacity, int adjacents){
+    public CellBuffer(int capacity, int adjacents, boolean cellStatus){
 
         this.nAdjacents = adjacents;
         this.capacity = capacity;
         this.semaforo  = new Semáforo(capacity);
-        System.out.println("I'm a mailbox with a capacity of " + capacity + " and " + adjacents + "adjacent messagers");
+        this.cellIsAlive = cellStatus;
+        //System.out.println("I'm a mailbox with a capacity of " + capacity + " and " + adjacents + "adjacent messagers");
         
     }
     
